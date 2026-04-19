@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ProteinFirst — Dashboard</title>
+<title>YouAreWhatYouEat — Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
@@ -19,25 +19,33 @@
   *{box-sizing:border-box;margin:0;padding:0;}
   body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
 
-  /* Login screen */
-  .login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg);}
+  /* ── Login ── */
+  .login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
   .login-box{background:var(--surface);border-radius:24px;padding:48px 40px;max-width:420px;width:100%;box-shadow:0 8px 48px rgba(0,0,0,0.08);}
-  .login-logo{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:3px;color:var(--green);margin-bottom:6px;}
+  .login-logo{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:3px;color:var(--green);margin-bottom:4px;}
   .login-tagline{font-size:13px;color:var(--text-dim);margin-bottom:32px;line-height:1.6;}
   .login-field{margin-bottom:16px;}
   .login-field label{display:block;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);margin-bottom:6px;}
   .login-field input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px 14px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);outline:none;transition:border-color .2s;}
   .login-field input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(45,106,79,0.08);}
-  .login-field small{font-size:12px;color:var(--text-muted);margin-top:6px;display:block;line-height:1.5;}
+  .login-field small{font-size:12px;color:var(--text-muted);margin-top:6px;display:block;}
   .login-btn{width:100%;background:var(--green);color:#fff;border:none;border-radius:var(--radius-sm);padding:15px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;cursor:pointer;margin-top:8px;transition:all .2s;}
-  .login-btn:hover{opacity:.88;transform:translateY(-1px);}
-  .login-btn:active{transform:translateY(0);}
+  .login-btn:hover{opacity:.88;}
   .login-hint{margin-top:20px;background:var(--surface2);border-radius:var(--radius-sm);padding:14px 16px;font-size:12px;color:var(--text-dim);line-height:1.7;}
   .login-hint strong{color:var(--text);}
-  .login-admin{margin-top:12px;text-align:center;}
-  .login-admin button{background:none;border:none;font-size:12px;color:var(--text-muted);cursor:pointer;text-decoration:underline;}
+  .login-error{color:var(--red);font-size:12px;margin-top:8px;display:none;}
 
-  /* Dashboard */
+  /* Admin login panel */
+  .admin-login-trigger{margin-top:16px;text-align:center;}
+  .admin-login-trigger button{background:none;border:none;font-size:11px;color:var(--text-muted);cursor:pointer;text-decoration:underline;opacity:.6;}
+  .admin-panel-login{display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--border);}
+  .admin-panel-login.visible{display:block;}
+  .admin-panel-login label{display:block;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:6px;}
+  .admin-panel-login input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 13px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;margin-bottom:8px;}
+  .admin-btn{width:100%;background:var(--text);color:#fff;border:none;border-radius:var(--radius-sm);padding:11px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px;cursor:pointer;}
+  .admin-error{color:var(--red);font-size:11px;margin-top:4px;display:none;}
+
+  /* ── Dashboard ── */
   .dashboard{display:none;}
   .dashboard.active{display:block;}
   .top-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:10;gap:12px;}
@@ -45,8 +53,11 @@
   .top-nav{display:flex;gap:4px;}
   .nav-btn{padding:6px 14px;border-radius:20px;border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text-dim);cursor:pointer;transition:all .15s;white-space:nowrap;}
   .nav-btn.active{background:var(--green);color:#fff;}
+  .nav-btn.admin-tab{background:rgba(192,57,43,0.08);color:var(--red);}
+  .nav-btn.admin-tab.active{background:var(--red);color:#fff;}
   .top-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
   .user-badge{font-size:12px;color:var(--green);background:var(--green-pale);padding:4px 12px;border-radius:20px;font-weight:500;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .admin-badge{font-size:12px;color:var(--red);background:var(--red-pale);padding:4px 12px;border-radius:20px;font-weight:500;}
   .logout-btn{font-size:12px;color:var(--text-muted);background:none;border:none;cursor:pointer;padding:4px 8px;}
 
   .main-content{max-width:1200px;margin:0 auto;padding:24px 18px;}
@@ -54,54 +65,84 @@
   .section.active{display:block;}
 
   /* Target banner */
-  .target-banner{border-radius:var(--radius);padding:16px 22px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  .target-banner{border-radius:var(--radius);padding:14px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
   .target-banner.ok{background:var(--green);color:#fff;}
   .target-banner.warn{background:var(--orange);color:#fff;}
-  .target-info{display:flex;gap:28px;flex-wrap:wrap;}
+  .target-info{display:flex;gap:24px;flex-wrap:wrap;}
   .target-item .target-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;opacity:.8;margin-bottom:2px;}
-  .target-item .target-val{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;}
-  .target-meta{font-size:12px;opacity:.85;margin-top:4px;}
+  .target-item .target-val{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;}
+  .target-meta{font-size:12px;opacity:.85;}
 
-  /* Stat cards */
-  .cards-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
-  @media(max-width:900px){.cards-row{grid-template-columns:repeat(2,1fr);}}
+  /* Date nav */
+  .date-nav{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+  .date-nav-btn{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text-dim);cursor:pointer;transition:all .15s;}
+  .date-nav-btn:hover{border-color:var(--green);color:var(--green);}
+  .date-nav-btn.today-btn{background:var(--green);color:#fff;border-color:var(--green);}
+  .date-nav-input{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;cursor:pointer;}
+  .date-nav-input:focus{border-color:var(--green);}
+  .date-display{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:var(--text-dim);}
+
+  /* Hero protein card */
+  .hero-protein{background:var(--green);color:#fff;border-radius:var(--radius);padding:24px 28px;margin-bottom:16px;display:flex;align-items:center;gap:28px;position:relative;overflow:hidden;}
+  .hero-protein::before{content:'';position:absolute;right:-30px;top:-30px;width:180px;height:180px;background:rgba(255,255,255,0.06);border-radius:50%;}
+  .hero-ring{position:relative;width:100px;height:100px;flex-shrink:0;}
+  .hero-ring svg{transform:rotate(-90deg);width:100px;height:100px;}
+  .ring-bg{fill:none;stroke:rgba(255,255,255,0.2);stroke-width:8;}
+  .ring-fill{fill:none;stroke:#fff;stroke-width:8;stroke-linecap:round;stroke-dasharray:264;stroke-dashoffset:264;transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1);}
+  .ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .ring-pct{font-family:'Bebas Neue',sans-serif;font-size:22px;line-height:1;}
+  .ring-unit{font-size:10px;opacity:.8;}
+  .hero-info{flex:1;}
+  .hero-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;opacity:.8;margin-bottom:4px;}
+  .hero-value{font-family:'Bebas Neue',sans-serif;font-size:52px;letter-spacing:1px;line-height:1;}
+  .hero-target{font-size:14px;opacity:.85;margin-top:2px;}
+  .hero-remaining{font-size:13px;opacity:.7;margin-top:6px;}
+  .hero-hit{font-size:13px;margin-top:6px;background:rgba(255,255,255,0.15);display:inline-block;padding:3px 10px;border-radius:20px;}
+
+  /* Secondary cards */
+  .cards-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+  @media(max-width:700px){.cards-row{grid-template-columns:1fr 1fr;}}
   .stat-card{background:var(--surface);border-radius:var(--radius);padding:18px;border:1px solid var(--border);position:relative;overflow:hidden;}
   .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
-  .stat-card.green::before{background:var(--green);}
   .stat-card.orange::before{background:var(--orange);}
   .stat-card.blue::before{background:var(--blue);}
-  .stat-card.red::before{background:var(--red);}
+  .stat-card.purple::before{background:#7d3c98;}
   .stat-label{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:6px;}
-  .stat-value{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:1px;line-height:1;margin-bottom:3px;}
-  .stat-card.green .stat-value{color:var(--green);}
+  .stat-value{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:1px;line-height:1;margin-bottom:3px;}
   .stat-card.orange .stat-value{color:var(--orange);}
   .stat-card.blue .stat-value{color:var(--blue);}
-  .stat-card.red .stat-value{color:var(--red);}
+  .stat-card.purple .stat-value{color:#7d3c98;}
   .stat-sub{font-size:12px;color:var(--text-dim);}
   .stat-bar{margin-top:10px;height:4px;background:var(--surface2);border-radius:10px;overflow:hidden;}
   .stat-bar-fill{height:100%;border-radius:10px;transition:width 1s ease;}
-  .green .stat-bar-fill{background:var(--green);}
   .orange .stat-bar-fill{background:var(--orange);}
   .blue .stat-bar-fill{background:var(--blue);}
 
-  /* Charts */
-  .charts-grid{display:grid;grid-template-columns:2fr 1fr;gap:18px;margin-bottom:18px;}
-  @media(max-width:800px){.charts-grid{grid-template-columns:1fr;}}
-  .chart-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:20px;}
-  .chart-title{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:1px;margin-bottom:3px;}
-  .chart-sub{font-size:12px;color:var(--text-dim);margin-bottom:16px;}
+  /* Insight strip */
+  .insight-strip{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+  @media(max-width:600px){.insight-strip{grid-template-columns:1fr;}}
+  .insight-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:16px 20px;}
+  .insight-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:8px;}
+  .insight-body{font-size:13px;color:var(--text-dim);line-height:1.6;}
+  .insight-body strong{color:var(--text);}
+  .insight-body .good{color:var(--green);}
+  .insight-body .warn{color:var(--orange);}
 
-  /* Bloat */
-  .bloat-list{display:flex;flex-direction:column;gap:10px;}
-  .bloat-item{display:flex;align-items:center;gap:10px;}
-  .bloat-name{font-size:12px;width:120px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .bloat-bar-track{flex:1;height:8px;background:var(--surface2);border-radius:10px;overflow:hidden;}
-  .bloat-bar-fill{height:100%;border-radius:10px;transition:width .8s;}
-  .bloat-score{font-size:11px;font-weight:500;width:28px;text-align:right;flex-shrink:0;}
+  /* Charts */
+  .charts-grid{display:grid;grid-template-columns:1fr;gap:18px;margin-bottom:18px;}
+  .chart-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:20px;}
+  .chart-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap;}
+  .chart-title{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:1px;}
+  .chart-sub{font-size:12px;color:var(--text-dim);margin-top:2px;}
+
+  /* Consistency score */
+  .consistency-row{display:flex;align-items:center;gap:16px;margin-top:12px;}
+  .consistency-score{font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--green);line-height:1;}
+  .consistency-label{font-size:13px;color:var(--text-dim);line-height:1.5;}
 
   /* Weekly */
-  .weekly-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;}
-  @media(max-width:700px){.weekly-grid{grid-template-columns:1fr;}}
+  .weekly-top{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;}
+  @media(max-width:700px){.weekly-top{grid-template-columns:1fr;}}
   .avg-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);}
   .avg-row:last-child{border-bottom:none;}
   .avg-label{font-size:13px;color:var(--text-dim);}
@@ -116,9 +157,14 @@
   .body-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
   .body-stat{background:var(--surface2);border-radius:var(--radius-sm);padding:12px 14px;}
   .body-stat-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:4px;}
-  .body-stat-val{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--green);}
+  .body-stat-val{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--green);}
   .body-stat-unit{font-size:11px;color:var(--text-dim);}
   .goal-badge{display:inline-block;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:500;background:var(--green-pale);color:var(--green);margin-top:8px;}
+  .recalc-countdown{margin-top:16px;padding:14px 16px;background:var(--surface2);border-radius:var(--radius-sm);font-size:13px;color:var(--text-dim);line-height:1.6;}
+  .recalc-countdown strong{color:var(--text);}
+  .details-toggle{background:none;border:none;font-size:12px;color:var(--green);cursor:pointer;margin-top:12px;text-decoration:underline;}
+  .details-hidden{display:none;margin-top:12px;}
+  .details-hidden.visible{display:block;}
 
   /* History */
   .history-controls{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
@@ -126,8 +172,9 @@
   .search-input{flex:1;min-width:160px;}
   .search-input:focus,.filter-select:focus{border-color:var(--green);}
   .history-table{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;}
-  .table-header{display:grid;grid-template-columns:2fr 1fr 1fr 80px 80px 80px 60px;padding:11px 18px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);gap:10px;}
-  .table-row{display:grid;grid-template-columns:2fr 1fr 1fr 80px 80px 80px 60px;padding:12px 18px;border-bottom:1px solid var(--border);align-items:center;gap:10px;transition:background .15s;}
+  .table-header{display:grid;grid-template-columns:2fr 1fr 80px 80px 80px 70px;padding:11px 18px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);gap:10px;cursor:pointer;}
+  .table-header span:hover{color:var(--green);}
+  .table-row{display:grid;grid-template-columns:2fr 1fr 80px 80px 80px 70px;padding:12px 18px;border-bottom:1px solid var(--border);align-items:center;gap:10px;transition:background .15s;}
   .table-row:last-child{border-bottom:none;}
   .table-row:hover{background:var(--surface2);}
   .row-dish{font-size:13px;font-weight:500;}
@@ -139,17 +186,34 @@
   .meal-snack{background:#fef9e7;color:#b7950b;}
   .meal-supper{background:#f4ecf7;color:#7d3c98;}
   .meal-supplement{background:var(--surface2);color:var(--text-dim);}
-  .row-user{font-size:11px;color:var(--text-muted);}
   .row-num{font-size:13px;font-weight:500;}
   .row-protein{color:var(--green);}
   .row-cal{color:var(--orange);}
-  .bloat-pill{font-size:16px;text-align:center;}
+  .row-pct{font-size:11px;color:var(--text-muted);background:var(--surface2);padding:2px 7px;border-radius:10px;white-space:nowrap;}
+
+  /* Admin section */
+  .admin-users-table{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;margin-bottom:20px;}
+  .admin-table-header{display:grid;grid-template-columns:1fr 1fr 100px 100px 120px;padding:11px 18px;background:var(--red-pale);border-bottom:1px solid var(--border);font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:1.5px;color:var(--red);gap:10px;}
+  .admin-table-row{display:grid;grid-template-columns:1fr 1fr 100px 100px 120px;padding:13px 18px;border-bottom:1px solid var(--border);align-items:center;gap:10px;cursor:pointer;transition:background .15s;}
+  .admin-table-row:last-child{border-bottom:none;}
+  .admin-table-row:hover{background:var(--surface2);}
+  .admin-user-name{font-size:13px;font-weight:500;}
+  .admin-user-id{font-size:11px;color:var(--text-muted);margin-top:2px;}
+  .active-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;}
+  .active-dot.today{background:var(--green);}
+  .active-dot.recent{background:var(--orange);}
+  .active-dot.old{background:var(--text-muted);}
+  .admin-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+  @media(max-width:700px){.admin-cards{grid-template-columns:1fr 1fr;}}
+  .admin-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:18px;border-top:3px solid var(--red);}
+  .admin-card .stat-value{color:var(--red);}
+  .view-user-btn{font-size:11px;color:var(--green);background:var(--green-pale);border:none;border-radius:10px;padding:4px 10px;cursor:pointer;font-weight:500;}
 
   /* States */
   .loading-state{text-align:center;padding:40px;color:var(--text-muted);}
   .loading-spinner{width:30px;height:30px;border:3px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px;}
   @keyframes spin{to{transform:rotate(360deg);}}
-  .empty-state{text-align:center;padding:40px;color:var(--text-muted);font-size:14px;}
+  .empty-state{text-align:center;padding:40px;color:var(--text-muted);font-size:14px;line-height:1.6;}
   .toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:#fff;padding:12px 20px;border-radius:30px;font-size:13px;font-weight:500;z-index:200;transform:translateY(80px);transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
   .toast.show{transform:translateY(0);}
   .toast.error{background:var(--red);}
@@ -157,44 +221,52 @@
 </head>
 <body>
 
-<!-- Login — only asks for Telegram User ID -->
+<!-- ── Login ── -->
 <div class="login-screen" id="loginScreen">
   <div class="login-box">
-    <div class="login-logo">ProteinFirst</div>
+    <div class="login-logo">YouAreWhatYouEat</div>
     <div class="login-tagline">Your personal nutrition tracker.<br>Enter your Telegram ID to see your data.</div>
 
     <div class="login-field">
       <label>Your Telegram User ID</label>
       <input type="number" id="inputUserId" placeholder="e.g. 123456789" autofocus
         onkeydown="if(event.key==='Enter') login()">
-      <small>Don't know your ID? Send <strong>/myid</strong> to the bot on Telegram.</small>
+      <small>Don't know your ID? Send <strong>/myid</strong> to the bot.</small>
     </div>
-
+    <div class="login-error" id="loginError">User ID not found. Please check and try again.</div>
     <button class="login-btn" onclick="login()">Open My Dashboard →</button>
 
     <div class="login-hint">
-      <strong>New here?</strong> Start by sending <strong>/start</strong> to the bot on Telegram,
-      then use <strong>/calculate</strong> to set up your personal targets.
+      <strong>New here?</strong> Send <strong>/start</strong> to the bot on Telegram,
+      then use <strong>/calculate</strong> to set up your targets.
     </div>
 
-    <div class="login-admin">
-      <button onclick="loginAdmin()">Admin view (all users)</button>
+    <!-- Admin login — hidden by default -->
+    <div class="admin-login-trigger">
+      <button onclick="toggleAdminLogin()">Admin access</button>
+    </div>
+    <div class="admin-panel-login" id="adminPanelLogin">
+      <label>Admin Password</label>
+      <input type="password" id="adminPasswordInput" placeholder="Enter admin password"
+        onkeydown="if(event.key==='Enter') adminLogin()">
+      <button class="admin-btn" onclick="adminLogin()">Login as Admin</button>
+      <div class="admin-error" id="adminError">Incorrect password.</div>
     </div>
   </div>
 </div>
 
-<!-- Dashboard -->
+<!-- ── Dashboard ── -->
 <div class="dashboard" id="dashboard">
   <div class="top-bar">
-    <div class="top-logo">ProteinFirst</div>
-    <div class="top-nav">
+    <div class="top-logo">YAWYЕ</div>
+    <div class="top-nav" id="topNav">
       <button class="nav-btn active" onclick="showSection('overview',this)">Overview</button>
       <button class="nav-btn" onclick="showSection('weekly',this)">Weekly</button>
       <button class="nav-btn" onclick="showSection('history',this)">History</button>
       <button class="nav-btn" onclick="showSection('profile',this)">Profile</button>
     </div>
     <div class="top-right">
-      <div class="user-badge" id="userBadge">—</div>
+      <div id="userBadge" class="user-badge">—</div>
       <button class="logout-btn" onclick="logout()">← Switch</button>
     </div>
   </div>
@@ -204,45 +276,81 @@
     <!-- OVERVIEW -->
     <div class="section active" id="section-overview">
       <div id="targetBanner"></div>
-      <div class="cards-row" id="todayCards">
+
+      <!-- Date nav -->
+      <div class="date-nav">
+        <button class="date-nav-btn" onclick="shiftDay(-1)">← Prev</button>
+        <button class="date-nav-btn today-btn" onclick="goToday()">Today</button>
+        <button class="date-nav-btn" onclick="shiftDay(1)" id="nextDayBtn">Next →</button>
+        <input type="date" class="date-nav-input" id="datePicker" onchange="setDate(this.value)">
+        <div class="date-display" id="dateDisplay">—</div>
+      </div>
+
+      <!-- Hero protein -->
+      <div class="hero-protein" id="heroProtein">
+        <div class="hero-ring">
+          <svg viewBox="0 0 100 100">
+            <circle class="ring-bg" cx="50" cy="50" r="42"/>
+            <circle class="ring-fill" id="heroRingFill" cx="50" cy="50" r="42"/>
+          </svg>
+          <div class="ring-center">
+            <div class="ring-pct" id="heroRingPct">0%</div>
+            <div class="ring-unit">of target</div>
+          </div>
+        </div>
+        <div class="hero-info">
+          <div class="hero-label">Protein Today</div>
+          <div class="hero-value" id="heroProteinVal">0g</div>
+          <div class="hero-target" id="heroProteinTarget">/ — target</div>
+          <div class="hero-remaining" id="heroRemaining">—</div>
+        </div>
+      </div>
+
+      <!-- Secondary stats -->
+      <div class="cards-row" id="secondaryCards">
         <div class="loading-state" style="grid-column:1/-1"><div class="loading-spinner"></div></div>
       </div>
-      <div class="charts-grid">
-        <div class="chart-card">
-          <div class="chart-title">7-Day Protein Trend</div>
-          <div class="chart-sub">Daily protein vs target · dark green = hit</div>
-          <canvas id="proteinChart" height="200"></canvas>
-        </div>
-        <div class="chart-card">
-          <div class="chart-title">Bloating Triggers</div>
-          <div class="chart-sub">Avg score by dish</div>
-          <div class="bloat-list" id="bloatList"><div class="loading-spinner" style="margin:20px auto"></div></div>
-        </div>
-      </div>
+
+      <!-- Insights -->
+      <div class="insight-strip" id="insightStrip"></div>
+
+      <!-- 7-day chart -->
       <div class="chart-card">
-        <div class="chart-title">7-Day Calorie Trend</div>
-        <div class="chart-sub">Daily calories vs target</div>
-        <canvas id="calChart" height="110"></canvas>
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">7-Day Protein</div>
+            <div class="chart-sub">Daily intake vs target · dark = hit · line = 7-day avg</div>
+          </div>
+        </div>
+        <canvas id="proteinChart" height="180"></canvas>
       </div>
     </div>
 
     <!-- WEEKLY -->
     <div class="section" id="section-weekly">
-      <div class="weekly-grid">
+      <div class="weekly-top">
         <div class="chart-card">
-          <div class="chart-title">This Week's Averages</div>
+          <div class="chart-title" style="margin-bottom:16px">This Week</div>
           <div id="weeklyAvgs"><div class="loading-spinner" style="margin:20px auto"></div></div>
         </div>
         <div class="chart-card">
           <div class="chart-title">Protein Hit Rate</div>
-          <div class="chart-sub">Days you hit your target</div>
-          <canvas id="hitChart" height="220"></canvas>
+          <div class="chart-sub" style="margin-bottom:16px">Days you hit your target</div>
+          <canvas id="hitChart" height="180"></canvas>
+        </div>
+      </div>
+      <div class="chart-card" style="margin-bottom:18px">
+        <div class="chart-title">30-Day Protein Consistency</div>
+        <div class="chart-sub" style="margin-bottom:12px">How consistently you're hitting your protein target</div>
+        <div class="consistency-row">
+          <div class="consistency-score" id="consistencyScore">—</div>
+          <div class="consistency-label" id="consistencyLabel">Loading...</div>
         </div>
       </div>
       <div class="chart-card">
-        <div class="chart-title">Macro Breakdown</div>
-        <div class="chart-sub">Daily protein / carbs / fat</div>
-        <canvas id="macroChart" height="120"></canvas>
+        <div class="chart-title">7-Day Calorie Trend</div>
+        <div class="chart-sub" style="margin-bottom:16px">Daily calories vs target</div>
+        <canvas id="calChart" height="120"></canvas>
       </div>
     </div>
 
@@ -265,11 +373,17 @@
           <option value="30">Last 30 days</option>
           <option value="90">Last 90 days</option>
         </select>
+        <select class="filter-select" id="sortFilter" onchange="filterHistory()">
+          <option value="date_desc">Newest first</option>
+          <option value="date_asc">Oldest first</option>
+          <option value="protein_desc">Highest protein</option>
+          <option value="cal_desc">Highest calories</option>
+        </select>
       </div>
       <div class="history-table">
         <div class="table-header">
-          <div>Dish</div><div>Meal</div><div>User</div>
-          <div>Protein</div><div>Calories</div><div>Carbs</div><div>Bloat</div>
+          <span>Dish</span><span>Meal</span>
+          <span>Protein</span><span>Calories</span><span>Carbs</span><span>Portion</span>
         </div>
         <div id="historyBody"><div class="loading-state"><div class="loading-spinner"></div></div></div>
       </div>
@@ -279,25 +393,39 @@
     <div class="section" id="section-profile">
       <div class="profile-grid">
         <div class="profile-card">
-          <div class="chart-title">Body Composition</div>
-          <div class="chart-sub" id="calcDate">Last calculated: —</div>
-          <div class="body-stats" id="bodyStats">
-            <div class="loading-state" style="grid-column:1/-1"><div class="loading-spinner"></div></div>
+          <div class="chart-title">Your Goals</div>
+          <div class="chart-sub" id="calcDate" style="margin-bottom:12px">Last calculated: —</div>
+          <div id="goalSummary"><div class="loading-spinner" style="margin:20px auto"></div></div>
+          <div class="recalc-countdown" id="recalcCountdown"></div>
+          <button class="details-toggle" onclick="toggleDetails()">Show full body composition ↓</button>
+          <div class="details-hidden" id="detailsHidden">
+            <div class="body-stats" id="bodyStats"></div>
           </div>
         </div>
         <div class="profile-card">
           <div class="chart-title">Calculated Targets</div>
-          <div class="chart-sub">From your last /calculate in the bot</div>
+          <div class="chart-sub" style="margin-bottom:12px">From your last /calculate in the bot</div>
           <div class="body-stats" id="calcTargets">
             <div class="loading-state" style="grid-column:1/-1"><div class="loading-spinner"></div></div>
           </div>
-          <div style="margin-top:16px;font-size:12px;color:var(--text-dim)">Send <strong>/calculate</strong> to the bot to update your targets.</div>
+          <div style="margin-top:16px;font-size:12px;color:var(--text-dim)">
+            Send <strong>/calculate</strong> to the bot to update your targets anytime.
+          </div>
         </div>
       </div>
-      <div class="chart-card">
-        <div class="chart-title">Recalibration Schedule</div>
-        <div class="chart-sub">Targets should be reset every 6-8 weeks as your body composition changes</div>
-        <div id="recalcInfo" style="padding-top:8px;font-size:13px;color:var(--text-dim);line-height:1.8;"></div>
+    </div>
+
+    <!-- ADMIN -->
+    <div class="section" id="section-admin">
+      <div class="admin-cards" id="adminCards">
+        <div class="loading-state" style="grid-column:1/-1"><div class="loading-spinner"></div></div>
+      </div>
+      <div class="chart-title" style="margin-bottom:12px">All Users</div>
+      <div class="admin-users-table">
+        <div class="admin-table-header">
+          <div>User</div><div>Goal</div><div>Today's Protein</div><div>Meals Today</div><div>Last Active</div>
+        </div>
+        <div id="adminUsersBody"><div class="loading-state"><div class="loading-spinner"></div></div></div>
       </div>
     </div>
 
@@ -313,45 +441,75 @@
 const SUPABASE_URL = 'https://vkpyuuaoxnyjjaugjcyu.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrcHl1dWFveG55amphdWdqY3l1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNjk0NTYsImV4cCI6MjA5MTk0NTQ1Nn0.VwZH1WXEzu26CEXU0-HC5zsd4iBxeEFBUVKqduZINkg';
 // ══════════════════════════════════════════
+// Admin password hash (SHA-256) — do not change
+const ADMIN_HASH = '35a0c92fbcb2043dbff02e9c42078db2c2f8c3d356f4d7e44ab2f562e27417cf';
+// ══════════════════════════════════════════
 
 let TARGET_P = 135, TARGET_C = 2300;
 let FILTER_USER_ID = null;
+let IS_ADMIN = false;
 let allMeals = [], userTargets = null;
-let proteinChart, calChart, hitChart, macroChart;
+let currentDate = new Date().toISOString().split('T')[0];
+let proteinChart, calChart, hitChart;
+let historySortField = 'date', historySortDir = 'desc';
 
 const MEAL_LABELS = {breakfast:'Breakfast',meal1:'Meal 1',meal2:'Meal 2',snack:'Snack',supper:'Supper',supplement:'Supplement'};
-const BLOAT_EMOJI = ['','😌','😐','😑','😣','🤢'];
-const GOAL_LABELS = {losefat:'📉 Lose Fat',recomp:'⚖️ Recomp',gainmuscle:'📈 Gain Muscle'};
-const ACTIVITY_LABELS = {sedentary:'Sedentary',light:'Light (1-3x/wk)',moderate:'Moderate (3-5x/wk)',active:'Active (6-7x/wk)',veryactive:'Very Active'};
 
-// ── Init ──
+// ── Auth ──
 window.onload = () => {
-  const saved = localStorage.getItem('pf_uid');
+  const saved = localStorage.getItem('yawyе_session');
   if (saved) {
-    FILTER_USER_ID = saved === 'admin' ? null : parseInt(saved);
+    const s = JSON.parse(saved);
+    FILTER_USER_ID = s.userId || null;
+    IS_ADMIN = s.isAdmin || false;
     launchDashboard();
   }
+  // Set date picker max to today
+  document.getElementById('datePicker').max = new Date().toISOString().split('T')[0];
+  document.getElementById('datePicker').value = currentDate;
 };
 
 function login() {
   const uid = document.getElementById('inputUserId').value.trim();
   if (!uid) { showToast('Please enter your Telegram User ID', true); return; }
   FILTER_USER_ID = parseInt(uid);
-  localStorage.setItem('pf_uid', uid);
+  IS_ADMIN = false;
+  localStorage.setItem('yawyе_session', JSON.stringify({userId: FILTER_USER_ID, isAdmin: false}));
   launchDashboard();
 }
 
-function loginAdmin() {
-  FILTER_USER_ID = null;
-  localStorage.setItem('pf_uid', 'admin');
-  launchDashboard();
+function toggleAdminLogin() {
+  const panel = document.getElementById('adminPanelLogin');
+  panel.classList.toggle('visible');
+}
+
+async function adminLogin() {
+  const pwd   = document.getElementById('adminPasswordInput').value;
+  const hash  = await sha256(pwd);
+  const errEl = document.getElementById('adminError');
+  if (hash === ADMIN_HASH) {
+    FILTER_USER_ID = null;
+    IS_ADMIN = true;
+    errEl.style.display = 'none';
+    localStorage.setItem('yawyе_session', JSON.stringify({userId: null, isAdmin: true}));
+    launchDashboard();
+  } else {
+    errEl.style.display = 'block';
+  }
+}
+
+async function sha256(message) {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
 
 function logout() {
-  localStorage.removeItem('pf_uid');
+  localStorage.removeItem('yawyе_session');
   location.reload();
 }
 
+// ── DB ──
 async function dbSelect(table, qs = '') {
   const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${qs}`, {
     headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
@@ -360,13 +518,23 @@ async function dbSelect(table, qs = '') {
   return r.json();
 }
 
+// ── Launch ──
 async function launchDashboard() {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('dashboard').classList.add('active');
-  document.getElementById('userBadge').textContent = FILTER_USER_ID ? `ID: ${FILTER_USER_ID}` : 'All Users';
 
-  // Load personal targets if user ID set
-  if (FILTER_USER_ID) {
+  if (IS_ADMIN) {
+    document.getElementById('userBadge').outerHTML = '<div class="admin-badge">👑 Admin</div>';
+    // Add admin tab
+    const nav = document.getElementById('topNav');
+    const adminBtn = document.createElement('button');
+    adminBtn.className = 'nav-btn admin-tab';
+    adminBtn.textContent = 'Admin';
+    adminBtn.onclick = function() { showSection('admin', this); loadAdminData(); };
+    nav.appendChild(adminBtn);
+  } else {
+    document.getElementById('userBadge').textContent = `ID: ${FILTER_USER_ID}`;
+    // Load personal targets
     try {
       const rows = await dbSelect('user_targets', `telegram_user_id=eq.${FILTER_USER_ID}`);
       if (rows && rows.length) {
@@ -374,9 +542,10 @@ async function launchDashboard() {
         TARGET_P = userTargets.target_protein_g || TARGET_P;
         TARGET_C = userTargets.target_calories || TARGET_C;
       }
-    } catch(e) { console.warn('No targets found', e); }
+    } catch(e) { console.warn('No targets', e); }
   }
 
+  updateDateDisplay();
   await loadAllData();
 }
 
@@ -391,162 +560,254 @@ async function loadAllData() {
     renderHistory();
     renderProfile();
   } catch(e) {
-    showToast('Failed to load data. Check your User ID.', true);
+    showToast('Failed to load data. Check your credentials.', true);
     console.error(e);
   }
 }
 
-// ── TARGET BANNER ──
-function renderTargetBanner() {
-  const el = document.getElementById('targetBanner');
-  if (!userTargets) { el.innerHTML = ''; return; }
+// ── Date navigation ──
+function updateDateDisplay() {
+  const d = new Date(currentDate + 'T00:00:00');
+  const today = new Date().toISOString().split('T')[0];
+  const isToday = currentDate === today;
+  document.getElementById('dateDisplay').textContent = isToday
+    ? 'Today'
+    : d.toLocaleDateString('en-MY', {weekday:'long', day:'numeric', month:'long'});
+  document.getElementById('datePicker').value = currentDate;
+  document.getElementById('nextDayBtn').disabled = isToday;
+  document.getElementById('nextDayBtn').style.opacity = isToday ? '0.4' : '1';
+}
 
-  const recalcDate = new Date(userTargets.recalculate_by);
-  const daysLeft = Math.ceil((recalcDate - new Date()) / (1000*60*60*24));
-  const isWarn = daysLeft <= 7;
-  const msg = daysLeft < 0
-    ? `⚠️ Overdue by ${Math.abs(daysLeft)} days — send /calculate to the bot`
-    : daysLeft === 0 ? `⚠️ Due today — send /calculate to recalibrate`
-    : daysLeft <= 7 ? `⚠️ Due in ${daysLeft} days — time to recalibrate`
-    : `Recalibrate by ${recalcDate.toLocaleDateString('en-MY',{day:'numeric',month:'short',year:'numeric'})} (${daysLeft} days)`;
+function shiftDay(delta) {
+  const d = new Date(currentDate + 'T00:00:00');
+  d.setDate(d.getDate() + delta);
+  const today = new Date().toISOString().split('T')[0];
+  const newDate = d.toISOString().split('T')[0];
+  if (newDate > today) return;
+  currentDate = newDate;
+  updateDateDisplay();
+  renderOverview();
+}
 
-  el.innerHTML = `<div class="target-banner ${isWarn?'warn':'ok'}">
-    <div class="target-info">
-      <div class="target-item">
-        <div class="target-label">Protein Target</div>
-        <div class="target-val">${TARGET_P}g</div>
-      </div>
-      <div class="target-item">
-        <div class="target-label">Calorie Target</div>
-        <div class="target-val">${TARGET_C} kcal</div>
-      </div>
-      <div class="target-item">
-        <div class="target-label">Goal</div>
-        <div class="target-val" style="font-size:18px">${GOAL_LABELS[userTargets.goal]||userTargets.goal}</div>
-      </div>
-    </div>
-    <div class="target-meta">${msg}</div>
-  </div>`;
+function goToday() {
+  currentDate = new Date().toISOString().split('T')[0];
+  updateDateDisplay();
+  renderOverview();
+}
+
+function setDate(val) {
+  currentDate = val;
+  updateDateDisplay();
+  renderOverview();
 }
 
 // ── OVERVIEW ──
 function renderOverview() {
   renderTargetBanner();
-  const today = new Date().toISOString().split('T')[0];
-  const tm = allMeals.filter(m => m.logged_at?.startsWith(today));
-  const totalP = tm.reduce((s,m) => s+(parseFloat(m.protein_g)||0), 0);
-  const totalC = tm.reduce((s,m) => s+(parseInt(m.calories)||0), 0);
-  const totalCarbs = tm.reduce((s,m) => s+(parseFloat(m.carbs_g)||0), 0);
-  const totalFat = tm.reduce((s,m) => s+(parseFloat(m.fat_g)||0), 0);
-  const pPct = Math.min(Math.round((totalP/TARGET_P)*100), 100);
-  const cPct = Math.min(Math.round((totalC/TARGET_C)*100), 100);
+  const dm = allMeals.filter(m => m.logged_at?.startsWith(currentDate));
+  const totalP = dm.reduce((s,m) => s+(parseFloat(m.protein_g)||0), 0);
+  const totalC = dm.reduce((s,m) => s+(parseInt(m.calories)||0), 0);
+  const totalCarbs = dm.reduce((s,m) => s+(parseFloat(m.carbs_g)||0), 0);
+  const totalFat = dm.reduce((s,m) => s+(parseFloat(m.fat_g)||0), 0);
+  const pPct = Math.min(Math.round((totalP / TARGET_P) * 100), 100);
+  const cPct = Math.min(Math.round((totalC / TARGET_C) * 100), 100);
+  const remaining = Math.max(TARGET_P - totalP, 0);
+  const circumference = 264;
+  const offset = circumference - (pPct / 100) * circumference;
 
-  document.getElementById('todayCards').innerHTML = `
-    <div class="stat-card green">
-      <div class="stat-label">Protein Today</div>
-      <div class="stat-value">${Math.round(totalP)}g</div>
-      <div class="stat-sub">${pPct}% of ${TARGET_P}g target</div>
-      <div class="stat-bar"><div class="stat-bar-fill" style="width:${pPct}%"></div></div>
-    </div>
+  // Hero protein ring
+  document.getElementById('heroRingFill').style.strokeDashoffset = offset;
+  document.getElementById('heroRingPct').textContent = `${pPct}%`;
+  document.getElementById('heroProteinVal').textContent = `${Math.round(totalP)}g`;
+  document.getElementById('heroProteinTarget').textContent = `/ ${TARGET_P}g target`;
+  if (remaining <= 0) {
+    document.getElementById('heroRemaining').innerHTML = '';
+    document.getElementById('heroProtein').insertAdjacentHTML('beforeend',
+      '<div class="hero-hit" style="position:absolute;bottom:16px;right:20px">🎉 Target hit!</div>'
+    );
+  } else {
+    document.getElementById('heroRemaining').textContent = `${remaining.toFixed(0)}g still needed`;
+  }
+
+  // Secondary cards
+  document.getElementById('secondaryCards').innerHTML = `
     <div class="stat-card orange">
-      <div class="stat-label">Calories Today</div>
+      <div class="stat-label">Calories</div>
       <div class="stat-value">${totalC}</div>
       <div class="stat-sub">${cPct}% of ${TARGET_C} kcal</div>
-      <div class="stat-bar"><div class="stat-bar-fill" style="width:${cPct}%"></div></div>
+      <div class="stat-bar"><div class="stat-bar-fill" style="width:${cPct}%;background:var(--orange)"></div></div>
     </div>
     <div class="stat-card blue">
-      <div class="stat-label">Carbs Today</div>
+      <div class="stat-label">Carbs</div>
       <div class="stat-value">${Math.round(totalCarbs)}g</div>
-      <div class="stat-sub">${tm.length} meals logged</div>
+      <div class="stat-sub">${dm.length} meal${dm.length!==1?'s':''} logged</div>
     </div>
-    <div class="stat-card red">
-      <div class="stat-label">Fat Today</div>
+    <div class="stat-card purple">
+      <div class="stat-label">Fat</div>
       <div class="stat-value">${Math.round(totalFat)}g</div>
-      <div class="stat-sub">${Math.max(TARGET_P-totalP,0).toFixed(0)}g protein remaining</div>
+      <div class="stat-sub">${Math.max(TARGET_P-totalP,0).toFixed(0)}g protein left</div>
     </div>`;
 
-  render7DayCharts();
-  renderBloatList();
+  renderInsights();
+  render7DayProtein();
+}
+
+function renderInsights() {
+  const days = getLast7Days();
+  const dayTotals = days.map(d => ({
+    date: d,
+    label: new Date(d+'T00:00:00').toLocaleDateString('en-MY',{weekday:'short'}),
+    p: allMeals.filter(m=>m.logged_at?.startsWith(d)).reduce((s,m)=>s+(parseFloat(m.protein_g)||0),0)
+  }));
+
+  const best  = dayTotals.reduce((a,b) => b.p>a.p?b:a, dayTotals[0]);
+  const worst = dayTotals.filter(d=>d.p>0).reduce((a,b) => b.p<a.p?b:a, dayTotals[0]);
+  const daysHit = dayTotals.filter(d => d.p >= TARGET_P).length;
+
+  // 30-day consistency
+  const since30 = new Date(); since30.setDate(since30.getDate()-30);
+  const last30Days = Array.from({length:30},(_,i)=>{
+    const d=new Date(); d.setDate(d.getDate()-i);
+    return d.toISOString().split('T')[0];
+  });
+  const daysWithData = last30Days.filter(d=>allMeals.some(m=>m.logged_at?.startsWith(d)));
+  const daysHit30 = last30Days.filter(d=>{
+    const p=allMeals.filter(m=>m.logged_at?.startsWith(d)).reduce((s,m)=>s+(parseFloat(m.protein_g)||0),0);
+    return p>=TARGET_P;
+  }).length;
+  const consistency = daysWithData.length > 0 ? Math.round((daysHit30/daysWithData.length)*100) : 0;
+
+  document.getElementById('insightStrip').innerHTML = `
+    <div class="insight-card">
+      <div class="insight-title">This Week</div>
+      <div class="insight-body">
+        Hit protein target <strong class="${daysHit>=5?'good':'warn'}">${daysHit}/7 days</strong>.<br>
+        Best day: <strong>${best.label} (${best.p.toFixed(0)}g)</strong>.<br>
+        ${worst&&worst.p>0?`Lowest: <strong>${worst.label} (${worst.p.toFixed(0)}g)</strong>.`:''}
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">30-Day Consistency</div>
+      <div class="insight-body">
+        You hit your protein target on <strong class="${consistency>=70?'good':'warn'}">${consistency}% of days</strong> you logged.<br>
+        ${consistency>=80?'🔥 Great consistency!':consistency>=60?'Getting there — keep logging consistently.':'Focus on hitting protein daily.'}
+      </div>
+    </div>`;
 }
 
 function getLast7Days() {
-  return Array.from({length:7}, (_,i) => {
-    const d = new Date(); d.setDate(d.getDate()-(6-i));
+  return Array.from({length:7},(_,i)=>{
+    const d=new Date(); d.setDate(d.getDate()-(6-i));
     return d.toISOString().split('T')[0];
   });
 }
 
-function render7DayCharts() {
+function render7DayProtein() {
   const days = getLast7Days();
-  const labels = days.map(d => new Date(d).toLocaleDateString('en-MY',{weekday:'short',day:'numeric'}));
-  const pData = days.map(d => allMeals.filter(m=>m.logged_at?.startsWith(d)).reduce((s,m)=>s+(parseFloat(m.protein_g)||0),0));
-  const cData = days.map(d => allMeals.filter(m=>m.logged_at?.startsWith(d)).reduce((s,m)=>s+(parseInt(m.calories)||0),0));
-  const base = {responsive:true,plugins:{legend:{display:false}},scales:{
-    x:{grid:{display:false},ticks:{font:{family:'DM Sans',size:11},color:'#a8a29e'}},
-    y:{grid:{color:'#f0ece3'},ticks:{font:{family:'DM Sans',size:11},color:'#a8a29e'}}
-  }};
+  const labels = days.map(d=>new Date(d+'T00:00:00').toLocaleDateString('en-MY',{weekday:'short',day:'numeric'}));
+  const pData = days.map(d=>allMeals.filter(m=>m.logged_at?.startsWith(d)).reduce((s,m)=>s+(parseFloat(m.protein_g)||0),0));
+
+  // Rolling 7-day average
+  const avgData = pData.map((_,i)=>{
+    const slice = pData.slice(Math.max(0,i-6),i+1).filter(v=>v>0);
+    return slice.length ? Math.round(slice.reduce((a,b)=>a+b,0)/slice.length) : null;
+  });
 
   if(proteinChart) proteinChart.destroy();
   proteinChart = new Chart(document.getElementById('proteinChart'),{
     type:'bar',
     data:{labels,datasets:[
-      {data:pData,backgroundColor:pData.map(v=>v>=TARGET_P?'#2d6a4f':'#95d5b2'),borderRadius:6},
-      {type:'line',data:Array(7).fill(TARGET_P),borderColor:'#1a1a1a',borderDash:[4,4],borderWidth:1.5,pointRadius:0}
+      {
+        data:pData,
+        backgroundColor:pData.map(v=>v>=TARGET_P?'#2d6a4f':'#95d5b2'),
+        borderRadius:6,
+        label:'Daily protein'
+      },
+      {
+        type:'line',
+        data:Array(7).fill(TARGET_P),
+        borderColor:'#1a1a1a',
+        borderDash:[4,4],
+        borderWidth:1.5,
+        pointRadius:0,
+        label:'Target'
+      },
+      {
+        type:'line',
+        data:avgData,
+        borderColor:'#e07a3a',
+        borderWidth:2,
+        pointRadius:3,
+        pointBackgroundColor:'#e07a3a',
+        tension:0.4,
+        label:'7-day avg'
+      }
     ]},
-    options:{...base,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.raw.toFixed(0)}g protein`}}}}
-  });
-
-  if(calChart) calChart.destroy();
-  calChart = new Chart(document.getElementById('calChart'),{
-    type:'line',
-    data:{labels,datasets:[
-      {data:cData,borderColor:'#e07a3a',backgroundColor:'rgba(224,122,58,0.08)',fill:true,tension:0.4,pointBackgroundColor:'#e07a3a',pointRadius:4},
-      {data:Array(7).fill(TARGET_C),borderColor:'#1a1a1a',borderDash:[4,4],borderWidth:1.5,pointRadius:0}
-    ]},
-    options:{...base,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.raw} kcal`}}}}
+    options:{
+      responsive:true,
+      plugins:{legend:{display:true,labels:{font:{family:'DM Sans',size:11},color:'#6b6560',boxWidth:12,boxHeight:12}},
+      tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.raw?.toFixed?.(0)??ctx.raw}g`}}},
+      scales:{
+        x:{grid:{display:false},ticks:{font:{family:'DM Sans',size:11},color:'#a8a29e'}},
+        y:{grid:{color:'#f0ece3'},ticks:{font:{family:'DM Sans',size:11},color:'#a8a29e'}}
+      }
+    }
   });
 }
 
-function renderBloatList() {
-  const map = {};
-  allMeals.forEach(m => {
-    if (!m.bloating_score||!m.dish_name) return;
-    if (!map[m.dish_name]) map[m.dish_name] = {total:0,count:0};
-    map[m.dish_name].total += m.bloating_score; map[m.dish_name].count++;
-  });
-  const sorted = Object.entries(map).map(([name,d])=>({name,avg:d.total/d.count}))
-    .filter(d=>d.avg>1).sort((a,b)=>b.avg-a.avg).slice(0,8);
-  if (!sorted.length) { document.getElementById('bloatList').innerHTML='<div class="empty-state">No bloating data yet</div>'; return; }
-  const colors = ['#c0392b','#e07a3a','#f39c12','#2d6a4f'];
-  document.getElementById('bloatList').innerHTML = sorted.map(d => {
-    const pct=(d.avg/5)*100;
-    const col=d.avg>=3.5?colors[0]:d.avg>=2.5?colors[1]:d.avg>=2?colors[2]:colors[3];
-    return `<div class="bloat-item">
-      <div class="bloat-name" title="${d.name}">${d.name}</div>
-      <div class="bloat-bar-track"><div class="bloat-bar-fill" style="width:${pct}%;background:${col}"></div></div>
-      <div class="bloat-score" style="color:${col}">${d.avg.toFixed(1)}</div>
-    </div>`;
-  }).join('');
+function renderTargetBanner() {
+  const el = document.getElementById('targetBanner');
+  if (!userTargets || IS_ADMIN) { el.innerHTML=''; return; }
+  const recalcDate = new Date(userTargets.recalculate_by);
+  const daysLeft = Math.ceil((recalcDate-new Date())/(1000*60*60*24));
+  const isWarn = daysLeft <= 7;
+  const msg = daysLeft<0
+    ?`⚠️ Overdue by ${Math.abs(daysLeft)} days — send /calculate`
+    :daysLeft===0?`⚠️ Due today`
+    :daysLeft<=7?`⚠️ Due in ${daysLeft} days`
+    :`Recalibrate by ${recalcDate.toLocaleDateString('en-MY',{day:'numeric',month:'short'})} (${daysLeft} days)`;
+  const GOAL_LABELS={losefat:'📉 Lose Fat',recomp:'⚖️ Recomp',gainmuscle:'📈 Gain Muscle'};
+  el.innerHTML=`<div class="target-banner ${isWarn?'warn':'ok'}">
+    <div class="target-info">
+      <div class="target-item"><div class="target-label">Protein</div><div class="target-val">${TARGET_P}g</div></div>
+      <div class="target-item"><div class="target-label">Calories</div><div class="target-val">${TARGET_C} kcal</div></div>
+      <div class="target-item"><div class="target-label">Goal</div><div class="target-val" style="font-size:16px">${GOAL_LABELS[userTargets.goal]||userTargets.goal}</div></div>
+    </div>
+    <div class="target-meta">${msg}</div>
+  </div>`;
 }
 
 // ── WEEKLY ──
 function renderWeekly() {
   const days = getLast7Days();
-  const wm = allMeals.filter(m => days.some(d=>m.logged_at?.startsWith(d)));
-  const n = days.filter(d=>allMeals.some(m=>m.logged_at?.startsWith(d))).length || 1;
+  const wm = allMeals.filter(m=>days.some(d=>m.logged_at?.startsWith(d)));
+  const n = days.filter(d=>allMeals.some(m=>m.logged_at?.startsWith(d))).length||1;
   const avgP = wm.reduce((s,m)=>s+(parseFloat(m.protein_g)||0),0)/n;
   const avgC = wm.reduce((s,m)=>s+(parseInt(m.calories)||0),0)/n;
   const avgCarbs = wm.reduce((s,m)=>s+(parseFloat(m.carbs_g)||0),0)/n;
   const avgFat = wm.reduce((s,m)=>s+(parseFloat(m.fat_g)||0),0)/n;
   const daysHit = days.filter(d=>allMeals.filter(m=>m.logged_at?.startsWith(d)).reduce((s,m)=>s+(parseFloat(m.protein_g)||0),0)>=TARGET_P).length;
 
-  document.getElementById('weeklyAvgs').innerHTML = `
+  document.getElementById('weeklyAvgs').innerHTML=`
     <div class="avg-row"><span class="avg-label">Avg daily protein</span><span class="avg-val ${avgP>=TARGET_P*0.8?'good':'warn'}">${avgP.toFixed(0)}g</span></div>
     <div class="avg-row"><span class="avg-label">Avg daily calories</span><span class="avg-val warn">${avgC.toFixed(0)}</span></div>
     <div class="avg-row"><span class="avg-label">Avg daily carbs</span><span class="avg-val">${avgCarbs.toFixed(0)}g</span></div>
     <div class="avg-row"><span class="avg-label">Avg daily fat</span><span class="avg-val">${avgFat.toFixed(0)}g</span></div>
     <div class="avg-row"><span class="avg-label">Protein target days hit</span><span class="avg-val ${daysHit>=5?'good':'warn'}">${daysHit}/7</span></div>
-    <div class="avg-row"><span class="avg-label">Total meals logged</span><span class="avg-val">${wm.length}</span></div>`;
+    <div class="avg-row"><span class="avg-label">Meals logged this week</span><span class="avg-val">${wm.length}</span></div>`;
+
+  // 30-day consistency score
+  const last30 = Array.from({length:30},(_,i)=>{const d=new Date();d.setDate(d.getDate()-i);return d.toISOString().split('T')[0];});
+  const withData = last30.filter(d=>allMeals.some(m=>m.logged_at?.startsWith(d)));
+  const hit30 = last30.filter(d=>allMeals.filter(m=>m.logged_at?.startsWith(d)).reduce((s,m)=>s+(parseFloat(m.protein_g)||0),0)>=TARGET_P).length;
+  const consistency = withData.length>0?Math.round((hit30/withData.length)*100):0;
+  document.getElementById('consistencyScore').textContent=`${consistency}%`;
+  document.getElementById('consistencyLabel').innerHTML=`
+    <strong>${hit30} of ${withData.length} days</strong> you logged food,<br>
+    you hit your protein target.<br>
+    <span style="color:${consistency>=80?'var(--green)':consistency>=60?'var(--orange)':'var(--red)'}">
+      ${consistency>=80?'🔥 Excellent':consistency>=60?'👍 Good progress':'⚠️ Needs improvement'}
+    </span>`;
 
   if(hitChart) hitChart.destroy();
   hitChart = new Chart(document.getElementById('hitChart'),{
@@ -561,103 +822,196 @@ function renderWeekly() {
     }}]
   });
 
-  const labels = days.map(d=>new Date(d).toLocaleDateString('en-MY',{weekday:'short',day:'numeric'}));
-  if(macroChart) macroChart.destroy();
-  macroChart = new Chart(document.getElementById('macroChart'),{
-    type:'bar',
+  const labels=getLast7Days().map(d=>new Date(d+'T00:00:00').toLocaleDateString('en-MY',{weekday:'short',day:'numeric'}));
+  const cData=getLast7Days().map(d=>allMeals.filter(m=>m.logged_at?.startsWith(d)).reduce((s,m)=>s+(parseInt(m.calories)||0),0));
+  if(calChart) calChart.destroy();
+  calChart=new Chart(document.getElementById('calChart'),{
+    type:'line',
     data:{labels,datasets:[
-      {label:'Protein',data:days.map(d=>allMeals.filter(m=>m.logged_at?.startsWith(d)).reduce((s,m)=>s+(parseFloat(m.protein_g)||0),0)),backgroundColor:'#2d6a4f',borderRadius:4},
-      {label:'Carbs',data:days.map(d=>allMeals.filter(m=>m.logged_at?.startsWith(d)).reduce((s,m)=>s+(parseFloat(m.carbs_g)||0),0)),backgroundColor:'#3a7ab5',borderRadius:4},
-      {label:'Fat',data:days.map(d=>allMeals.filter(m=>m.logged_at?.startsWith(d)).reduce((s,m)=>s+(parseFloat(m.fat_g)||0),0)),backgroundColor:'#e07a3a',borderRadius:4},
+      {data:cData,borderColor:'#e07a3a',backgroundColor:'rgba(224,122,58,0.08)',fill:true,tension:0.4,pointBackgroundColor:'#e07a3a',pointRadius:4},
+      {data:Array(7).fill(TARGET_C),borderColor:'#1a1a1a',borderDash:[4,4],borderWidth:1.5,pointRadius:0}
     ]},
-    options:{responsive:true,scales:{
-      x:{stacked:true,grid:{display:false},ticks:{font:{family:'DM Sans',size:11},color:'#a8a29e'}},
-      y:{stacked:true,grid:{color:'#f0ece3'},ticks:{font:{family:'DM Sans',size:11},color:'#a8a29e'}}
-    },plugins:{legend:{labels:{font:{family:'DM Sans',size:12},color:'#6b6560',boxWidth:12,boxHeight:12}}}}
+    options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.raw} kcal`}}},
+    scales:{x:{grid:{display:false},ticks:{font:{family:'DM Sans',size:11},color:'#a8a29e'}},
+    y:{grid:{color:'#f0ece3'},ticks:{font:{family:'DM Sans',size:11},color:'#a8a29e'}}}}
   });
 }
 
 // ── PROFILE ──
 function renderProfile() {
   if (!userTargets) {
-    document.getElementById('bodyStats').innerHTML = '<div class="empty-state" style="grid-column:1/-1">No targets yet.<br>Send /calculate to the bot.</div>';
-    document.getElementById('calcTargets').innerHTML = '<div class="empty-state" style="grid-column:1/-1">—</div>';
-    document.getElementById('recalcInfo').innerHTML = 'Use /calculate in the bot to set personalised targets.';
+    document.getElementById('goalSummary').innerHTML='<div class="empty-state">No targets set.<br>Send /calculate to the bot.</div>';
+    document.getElementById('calcTargets').innerHTML='<div class="empty-state" style="grid-column:1/-1">—</div>';
     return;
   }
+  const t=userTargets;
+  const calcDate=new Date(t.calculated_at).toLocaleDateString('en-MY',{day:'numeric',month:'short',year:'numeric'});
+  const recalcDate=new Date(t.recalculate_by);
+  const daysLeft=Math.ceil((recalcDate-new Date())/(1000*60*60*24));
+  const GOAL_LABELS={losefat:'📉 Lose Fat',recomp:'⚖️ Recomp',gainmuscle:'📈 Gain Muscle'};
+  const ACTIVITY_LABELS={sedentary:'Sedentary',light:'Light (1-3x/wk)',moderate:'Moderate (3-5x/wk)',active:'Active (6-7x/wk)',veryactive:'Very Active'};
 
-  const t = userTargets;
-  const calcDate = new Date(t.calculated_at).toLocaleDateString('en-MY',{day:'numeric',month:'short',year:'numeric'});
-  const recalcDate = new Date(t.recalculate_by);
-  const daysLeft = Math.ceil((recalcDate-new Date())/(1000*60*60*24));
+  document.getElementById('calcDate').textContent=`Last calculated: ${calcDate}`;
 
-  document.getElementById('calcDate').textContent = `Last calculated: ${calcDate}`;
+  document.getElementById('goalSummary').innerHTML=`
+    <div style="margin-bottom:8px">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:4px">Current Goal</div>
+      <span class="goal-badge">${GOAL_LABELS[t.goal]||t.goal}</span>
+    </div>
+    <div class="avg-row"><span class="avg-label">Daily protein target</span><span class="avg-val good">${t.target_protein_g}g</span></div>
+    <div class="avg-row"><span class="avg-label">Daily calorie target</span><span class="avg-val warn">${t.target_calories} kcal</span></div>
+    <div class="avg-row"><span class="avg-label">Activity level</span><span style="font-size:13px;font-weight:500">${ACTIVITY_LABELS[t.activity_level]||t.activity_level}</span></div>`;
 
-  document.getElementById('bodyStats').innerHTML = `
+  const col=daysLeft<0?'var(--red)':daysLeft<=7?'var(--orange)':'var(--green)';
+  document.getElementById('recalcCountdown').innerHTML=`
+    <span style="color:${col};font-weight:500">
+      ${daysLeft<0?`⚠️ Overdue by ${Math.abs(daysLeft)} days`:daysLeft===0?`⚠️ Due today`:`✅ ${daysLeft} days until recalibration`}
+    </span><br>
+    Due: <strong>${recalcDate.toLocaleDateString('en-MY',{day:'numeric',month:'long',year:'numeric'})}</strong><br>
+    Send <strong>/calculate</strong> to the bot when ready.`;
+
+  document.getElementById('bodyStats').innerHTML=`
     <div class="body-stat"><div class="body-stat-label">Weight</div><div class="body-stat-val">${t.weight_kg}<span class="body-stat-unit"> kg</span></div></div>
     <div class="body-stat"><div class="body-stat-label">Body Fat</div><div class="body-stat-val">${t.body_fat_pct}<span class="body-stat-unit"> %</span></div></div>
     <div class="body-stat"><div class="body-stat-label">Lean Mass</div><div class="body-stat-val">${t.lmm_kg}<span class="body-stat-unit"> kg</span></div></div>
-    <div class="body-stat"><div class="body-stat-label">Fat Mass</div><div class="body-stat-val">${t.fat_mass_kg}<span class="body-stat-unit"> kg</span></div></div>
-    <div class="body-stat" style="grid-column:1/-1">
-      <div class="body-stat-label">Goal</div>
-      <span class="goal-badge">${GOAL_LABELS[t.goal]||t.goal}</span>
-    </div>`;
+    <div class="body-stat"><div class="body-stat-label">Fat Mass</div><div class="body-stat-val">${t.fat_mass_kg}<span class="body-stat-unit"> kg</span></div></div>`;
 
-  document.getElementById('calcTargets').innerHTML = `
+  document.getElementById('calcTargets').innerHTML=`
     <div class="body-stat"><div class="body-stat-label">BMR</div><div class="body-stat-val">${t.bmr}<span class="body-stat-unit"> kcal</span></div></div>
     <div class="body-stat"><div class="body-stat-label">TDEE</div><div class="body-stat-val">${t.tdee}<span class="body-stat-unit"> kcal</span></div></div>
     <div class="body-stat"><div class="body-stat-label">Protein Target</div><div class="body-stat-val">${t.target_protein_g}<span class="body-stat-unit"> g</span></div></div>
-    <div class="body-stat"><div class="body-stat-label">Calorie Target</div><div class="body-stat-val">${t.target_calories}<span class="body-stat-unit"> kcal</span></div></div>
-    <div class="body-stat" style="grid-column:1/-1">
-      <div class="body-stat-label">Activity Level</div>
-      <div style="margin-top:6px;font-size:14px;font-weight:500">${ACTIVITY_LABELS[t.activity_level]||t.activity_level}</div>
-    </div>`;
+    <div class="body-stat"><div class="body-stat-label">Calorie Target</div><div class="body-stat-val">${t.target_calories}<span class="body-stat-unit"> kcal</span></div></div>`;
+}
 
-  const col = daysLeft<0?'var(--red)':daysLeft<=7?'var(--orange)':'var(--green)';
-  document.getElementById('recalcInfo').innerHTML = `
-    <span style="color:${col};font-weight:500">
-      ${daysLeft<0?`⚠️ Overdue by ${Math.abs(daysLeft)} days`:daysLeft===0?`⚠️ Due today`:`✅ ${daysLeft} days remaining`}
-    </span><br>
-    Recalibrate by: <strong>${recalcDate.toLocaleDateString('en-MY',{day:'numeric',month:'long',year:'numeric'})}</strong><br><br>
-    As your body composition changes, your TDEE and protein needs shift.
-    Send <strong>/calculate</strong> to the bot when due.`;
+function toggleDetails() {
+  const el = document.getElementById('detailsHidden');
+  el.classList.toggle('visible');
+  const btn = document.querySelector('.details-toggle');
+  btn.textContent = el.classList.contains('visible') ? 'Hide body composition ↑' : 'Show full body composition ↓';
 }
 
 // ── HISTORY ──
 function renderHistory() { filterHistory(); }
-function filterHistory() {
-  const search = document.getElementById('searchInput').value.toLowerCase();
-  const meal = document.getElementById('mealFilter').value;
-  const days = parseInt(document.getElementById('dateFilter').value);
-  const since = new Date(); since.setDate(since.getDate()-days);
 
-  const filtered = allMeals.filter(m =>
+function filterHistory() {
+  const search  = document.getElementById('searchInput').value.toLowerCase();
+  const meal    = document.getElementById('mealFilter').value;
+  const days    = parseInt(document.getElementById('dateFilter').value);
+  const sort    = document.getElementById('sortFilter').value;
+  const since   = new Date(); since.setDate(since.getDate()-days);
+
+  let filtered = allMeals.filter(m =>
     (!search||m.dish_name?.toLowerCase().includes(search)) &&
     (!meal||m.meal_type===meal) &&
     (new Date(m.logged_at)>=since)
   );
 
-  if (!filtered.length) { document.getElementById('historyBody').innerHTML='<div class="empty-state">No meals found</div>'; return; }
-  document.getElementById('historyBody').innerHTML = filtered.map(m => {
-    const d = new Date(m.logged_at);
-    const dateStr = d.toLocaleDateString('en-MY',{day:'numeric',month:'short'});
-    const timeStr = d.toLocaleTimeString('en-MY',{hour:'2-digit',minute:'2-digit'});
-    const mClass = `meal-${m.meal_type||'meal1'}`;
-    const mLabel = MEAL_LABELS[m.meal_type]||m.meal_type||'—';
-    const bloat = BLOAT_EMOJI[m.bloating_score]||'';
-    const user = m.telegram_username||`ID:${m.telegram_user_id}`||'—';
+  // Sort
+  filtered.sort((a,b)=>{
+    if(sort==='date_desc') return new Date(b.logged_at)-new Date(a.logged_at);
+    if(sort==='date_asc')  return new Date(a.logged_at)-new Date(b.logged_at);
+    if(sort==='protein_desc') return (parseFloat(b.protein_g)||0)-(parseFloat(a.protein_g)||0);
+    if(sort==='cal_desc')  return (parseInt(b.calories)||0)-(parseInt(a.calories)||0);
+    return 0;
+  });
+
+  if(!filtered.length){
+    document.getElementById('historyBody').innerHTML='<div class="empty-state">No meals found for this filter.</div>';
+    return;
+  }
+
+  document.getElementById('historyBody').innerHTML=filtered.map(m=>{
+    const d=new Date(m.logged_at);
+    const dateStr=d.toLocaleDateString('en-MY',{day:'numeric',month:'short'});
+    const timeStr=d.toLocaleTimeString('en-MY',{hour:'2-digit',minute:'2-digit'});
+    const mClass=`meal-${m.meal_type||'meal1'}`;
+    const mLabel=MEAL_LABELS[m.meal_type]||m.meal_type||'—';
+    const pct=m.portion_pct||100;
+    const pctBadge=pct!==100?`<span class="row-pct">${pct}%</span>`:'<span class="row-pct">Full</span>';
     return `<div class="table-row">
-      <div><div class="row-dish">${m.dish_name||'—'}</div><div class="row-dish-sub">${dateStr} · ${timeStr}</div></div>
+      <div>
+        <div class="row-dish">${m.dish_name||'—'}</div>
+        <div class="row-dish-sub">${dateStr} · ${timeStr}</div>
+      </div>
       <div><span class="row-meal ${mClass}">${mLabel}</span></div>
-      <div class="row-user">${user}</div>
       <div class="row-num row-protein">${parseFloat(m.protein_g||0).toFixed(0)}g</div>
       <div class="row-num row-cal">${m.calories||0}</div>
       <div class="row-num">${parseFloat(m.carbs_g||0).toFixed(0)}g</div>
-      <div class="bloat-pill">${bloat}</div>
+      <div>${pctBadge}</div>
     </div>`;
   }).join('');
 }
 
+// ── ADMIN ──
+async function loadAdminData() {
+  if (!IS_ADMIN) return;
+  try {
+    // Load all meals (no user filter)
+    const since = new Date(); since.setDate(since.getDate()-30);
+    const meals = await dbSelect('meals', `logged_at=gte.${since.toISOString()}&order=logged_at.desc`);
+    const targets = await dbSelect('user_targets', 'order=calculated_at.desc');
+    const today = new Date().toISOString().split('T')[0];
+
+    // Summary cards
+    const uniqueUsers = [...new Set(meals.map(m=>m.telegram_user_id).filter(Boolean))];
+    const todayMeals = meals.filter(m=>m.logged_at?.startsWith(today));
+    const totalMeals30 = meals.length;
+
+    document.getElementById('adminCards').innerHTML=`
+      <div class="admin-card">
+        <div class="stat-label">Total Users</div>
+        <div class="stat-value">${uniqueUsers.length}</div>
+        <div class="stat-sub">with data in last 30 days</div>
+      </div>
+      <div class="admin-card">
+        <div class="stat-label">Meals Today</div>
+        <div class="stat-value">${todayMeals.length}</div>
+        <div class="stat-sub">across all users</div>
+      </div>
+      <div class="admin-card">
+        <div class="stat-label">Meals (30 days)</div>
+        <div class="stat-value">${totalMeals30}</div>
+        <div class="stat-sub">total entries logged</div>
+      </div>`;
+
+    // Per-user table
+    const GOAL_LABELS={losefat:'Lose Fat',recomp:'Recomp',gainmuscle:'Gain Muscle'};
+    document.getElementById('adminUsersBody').innerHTML = uniqueUsers.map(uid=>{
+      const userMeals = meals.filter(m=>m.telegram_user_id===uid);
+      const todayP = userMeals.filter(m=>m.logged_at?.startsWith(today)).reduce((s,m)=>s+(parseFloat(m.protein_g)||0),0);
+      const todayCount = userMeals.filter(m=>m.logged_at?.startsWith(today)).length;
+      const lastActive = userMeals[0]?.logged_at ? new Date(userMeals[0].logged_at) : null;
+      const lastStr = lastActive ? lastActive.toLocaleDateString('en-MY',{day:'numeric',month:'short'}) : '—';
+      const isToday = lastActive?.toISOString().startsWith(today);
+      const isRecent = lastActive && (new Date()-lastActive)<7*24*60*60*1000;
+      const dotClass = isToday?'today':isRecent?'recent':'old';
+      const username = userMeals[0]?.telegram_username || `ID: ${uid}`;
+      const userTarget = targets.find(t=>t.telegram_user_id===uid);
+      const goalLabel = userTarget ? (GOAL_LABELS[userTarget.goal]||userTarget.goal) : '—';
+      const targetP = userTarget?.target_protein_g || 135;
+      const pPct = Math.min(Math.round((todayP/targetP)*100),100);
+      return `<div class="admin-table-row">
+        <div>
+          <div class="admin-user-name"><span class="active-dot ${dotClass}"></span>${username}</div>
+          <div class="admin-user-id">ID: ${uid}</div>
+        </div>
+        <div style="font-size:13px;color:var(--text-dim)">${goalLabel}</div>
+        <div>
+          <div class="row-num row-protein">${todayP.toFixed(0)}g</div>
+          <div style="font-size:11px;color:var(--text-muted)">${pPct}% of target</div>
+        </div>
+        <div style="font-size:13px">${todayCount} meal${todayCount!==1?'s':''}</div>
+        <div style="font-size:12px;color:var(--text-dim)"><span class="active-dot ${dotClass}"></span>${lastStr}</div>
+      </div>`;
+    }).join('') || '<div class="empty-state">No user data found.</div>';
+
+  } catch(e) {
+    showToast('Failed to load admin data', true);
+    console.error(e);
+  }
+}
+
+// ── Nav ──
 function showSection(name, btn) {
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
@@ -665,10 +1019,11 @@ function showSection(name, btn) {
   btn.classList.add('active');
 }
 
+// ── Toast ──
 function showToast(msg, error=false) {
-  const t = document.getElementById('toast');
-  t.textContent=msg; t.className='toast show'+(error?' error':'');
-  setTimeout(()=>t.classList.remove('show'), 3000);
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast show'+(error?' error':'');
+  setTimeout(()=>t.classList.remove('show'),3000);
 }
 </script>
 </body>
