@@ -217,7 +217,22 @@
   .toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:#fff;padding:12px 20px;border-radius:30px;font-size:13px;font-weight:500;z-index:200;transform:translateY(80px);transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
   .toast.show{transform:translateY(0);}
   .toast.error{background:var(--red);}
-</style>
+
+  /* ── How to use block ── */
+  .howto-block{margin-top:20px;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;}
+  .howto-toggle{width:100%;background:var(--surface2);border:none;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--text-dim);text-align:left;}
+  .howto-toggle:hover{background:var(--border);}
+  .howto-toggle .arrow{transition:transform .2s;font-style:normal;}
+  .howto-toggle.open .arrow{transform:rotate(180deg);}
+  .howto-content{display:none;padding:16px;background:var(--surface);font-size:12px;color:var(--text-dim);line-height:1.8;}
+  .howto-content.visible{display:block;}
+  .howto-content h4{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin:12px 0 6px;font-weight:500;}
+  .howto-content h4:first-child{margin-top:0;}
+  .howto-content p{margin-bottom:6px;}
+  .howto-content code{background:var(--surface2);padding:1px 6px;border-radius:4px;font-family:monospace;font-size:11px;color:var(--text);}
+  .howto-content .tip{display:flex;gap:8px;margin-bottom:4px;}
+  .howto-content .tip-icon{flex-shrink:0;}</style>
+
 </head>
 <body>
 
@@ -239,6 +254,43 @@
     <div class="login-hint">
       <strong>New here?</strong> Send <strong>/start</strong> to the bot on Telegram,
       then use <strong>/calculate</strong> to set up your targets.
+    </div>
+
+    <!-- How to use — collapsible, shown by default first visit -->
+    <div class="howto-block" id="howtoBlock">
+      <button class="howto-toggle open" id="howtoToggle" onclick="toggleHowto()">
+        <span>📖 How to use YouAreWhatYouEat</span>
+        <span class="arrow">▲</span>
+      </button>
+      <div class="howto-content visible" id="howtoContent">
+
+        <h4>Getting started</h4>
+        <div class="tip"><span class="tip-icon">1️⃣</span><span>Find the bot on Telegram → send <strong>/start</strong></span></div>
+        <div class="tip"><span class="tip-icon">2️⃣</span><span>Run <strong>/calculate</strong> to set your protein & calorie targets</span></div>
+        <div class="tip"><span class="tip-icon">3️⃣</span><span>Start logging meals — by photo or by typing</span></div>
+        <div class="tip"><span class="tip-icon">4️⃣</span><span>Come back here with your Telegram ID to view your data</span></div>
+
+        <h4>Logging meals</h4>
+        <div class="tip"><span class="tip-icon">📷</span><span>Send any food photo — hawker food, home meals, packaged items</span></div>
+        <div class="tip"><span class="tip-icon">⌨️</span><span>Or just type what you ate — no photo needed:</span></div>
+        <p style="margin-left:24px;margin-top:2px">
+          <code>nasi lemak</code><br>
+          <code>chicken breast 180g raw</code><br>
+          <code>fish, tofu, kangkung, rice</code> ← multiple dishes at once
+        </p>
+
+        <h4>Useful commands</h4>
+        <div class="tip"><span class="tip-icon">📊</span><span><strong>/summary</strong> — today's protein & calorie totals</span></div>
+        <div class="tip"><span class="tip-icon">✏️</span><span><strong>/edit</strong> — edit or delete today's meals</span></div>
+        <div class="tip"><span class="tip-icon">⚙️</span><span><strong>/setup</strong> — preferences, tone, bloating toggle</span></div>
+        <div class="tip"><span class="tip-icon">❓</span><span><strong>/help</strong> — interactive help, or just ask "how do I..."</span></div>
+
+        <h4>Tips</h4>
+        <div class="tip"><span class="tip-icon">💡</span><span>Add a caption to photos for better accuracy</span></div>
+        <div class="tip"><span class="tip-icon">💡</span><span>Estimates for Malaysian dishes may vary ±20–30%</span></div>
+        <div class="tip"><span class="tip-icon">💡</span><span>Run <strong>/calculate</strong> every 6–8 weeks as your body changes</span></div>
+
+      </div>
     </div>
 
     <!-- Admin login — hidden by default -->
@@ -455,8 +507,29 @@ let historySortField = 'date', historySortDir = 'desc';
 
 const MEAL_LABELS = {breakfast:'Breakfast',meal1:'Meal 1',meal2:'Meal 2',snack:'Snack',supper:'Supper',supplement:'Supplement'};
 
+// ── How to use toggle ──
+function toggleHowto() {
+  const content = document.getElementById('howtoContent');
+  const toggle  = document.getElementById('howtoToggle');
+  content.classList.toggle('visible');
+  toggle.classList.toggle('open');
+}
+
+// Auto-collapse how-to after first login (remember in localStorage)
+function maybeCollapseHowto() {
+  if (localStorage.getItem('yawyе_visited')) {
+    const content = document.getElementById('howtoContent');
+    const toggle  = document.getElementById('howtoToggle');
+    if (content) content.classList.remove('visible');
+    if (toggle)  toggle.classList.remove('open');
+  } else {
+    localStorage.setItem('yawyе_visited', '1');
+  }
+}
+
 // ── Auth ──
 window.onload = () => {
+  maybeCollapseHowto();
   const saved = localStorage.getItem('yawyе_session');
   if (saved) {
     const s = JSON.parse(saved);
